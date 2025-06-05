@@ -5,6 +5,7 @@ import Register from "./pages/Register";
 import Profile from "./pages/Profile"; 
 import Feed from "./pages/Feed"; 
 import Messages from "./pages/Messages"; 
+import FriendsList from "./pages/FriendsList";
 
 
 export default function App() {
@@ -17,6 +18,9 @@ export default function App() {
         <Route path="/feed" element={<Feed />} />
         <Route path="/suggestions" element={<Suggestions />} />
         <Route path="/messages" element={<Messages />} />
+        <Route path="/FriendsList/:userId" element={<FriendsList />} />
+        <Route path="/Suggestions/:userId" element={<Suggestions />} />
+
       </Routes>
     </BrowserRouter>
   );
