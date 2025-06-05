@@ -1,25 +1,27 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import Sidebar from "../components/Sidebar";
 
-export default function Suggestions({ userId = 1 }) {
+export default function Suggestions() {
+  const { userId } = useParams();
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (!userId) return;
 
     async function fetchSuggestions() {
       try {
         const response = await fetch(`http://localhost:3001/suggestions/${userId}`);
-        console.log("Status:", response.status);
-        const text = await response.text();
-        console.log("Raw response text:", text);
         if (!response.ok) throw new Error("Erreur lors du chargement des suggestions");
+
         const data = await response.json();
+        console.log("Suggestions reçues :", data);
+
         setSuggestions(Array.isArray(data) ? data : []);
       } catch (error) {
-        console.error(error);
+        console.error("Erreur de fetch :", error);
         setSuggestions([]);
       } finally {
         setLoading(false);
@@ -34,7 +36,6 @@ export default function Suggestions({ userId = 1 }) {
       <Sidebar />
       <div className="ml-60 flex-1 p-6">
         <h1 className="text-3xl font-bold text-center mb-6">Suggested Profiles</h1>
-
         {loading ? (
           <p className="text-center text-gray-600">Loading suggestions...</p>
         ) : suggestions.length === 0 ? (
