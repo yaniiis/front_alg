@@ -20,6 +20,9 @@ app.use("/friends", friendsRouter);
 const suggestionsRouter = require("./routes/suggestions");
 app.use("/suggestions", suggestionsRouter);
 
+
+
+
 // Démarrage serveur
 app.listen(3001, () => {
   console.log("Serveur backend démarré sur http://localhost:3001");
