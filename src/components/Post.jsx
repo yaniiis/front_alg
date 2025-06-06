@@ -20,24 +20,39 @@ export default function Post({ post }) {
         )}
         <h3 className="font-semibold text-lg text-indigo-700">{post.author}</h3>
       </div>
+
+      {/* ✅ Titre du post */}
+      <h2 className="text-xl font-bold text-gray-900 mb-2">{post.title}</h2>
+
       <p className="text-gray-800 mb-3">{post.content}</p>
-      {post.image_url && (
-        <img
-          src={post.image_url}
-          alt="Post"
-          className="w-full h-auto rounded-md"
-        />
-      )}
-      {post.video_url && (
-        <div className="aspect-video mt-2">
-          <iframe
-            src={post.video_url}
-            className="w-full h-full rounded-md"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            title={`video-${post.id}`}
-          ></iframe>
+
+      {/* Médias */}
+      {Array.isArray(post.media) && post.media.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+          {post.media.map((file, index) => {
+            const isImage = file.type === "image";
+            const isVideo = file.type === "video";
+
+            return (
+              <div key={index} className="w-full">
+                {isImage && (
+                  <img
+                    src={file.url}
+                    alt={`media-${index}`}
+                    className="rounded-md w-full"
+                    onError={() => console.error("Erreur de chargement d'image :", file.url)}
+                  />
+                )}
+                {isVideo && (
+                  <video
+                    controls
+                    src={file.url}
+                    className="rounded-md w-full max-h-64"
+                  />
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </motion.div>
