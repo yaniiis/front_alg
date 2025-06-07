@@ -1,13 +1,24 @@
 import { useEffect, useState } from "react";
 import { fetchComments, addComment } from "../api/comments";
+import {
+  getLikesCount,
+  hasUserLiked,
+  likePost,
+  unlikePost,
+} from "../api/likes";
 import { motion } from "framer-motion";
 
 export default function Post({ post }) {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const [likesCount, setLikesCount] = useState(0);
+  const [liked, setLiked] = useState(false);
+
+  const userId = 10; // 🔄 Remplacer par l'ID de l'utilisateur connecté
 
   useEffect(() => {
     loadComments();
+    loadLikes();
   }, []);
 
   const loadComments = async () => {
@@ -23,14 +34,36 @@ export default function Post({ post }) {
     e.preventDefault();
     if (!newComment.trim()) return;
 
-    const user_id = 10; // Remplacez par l'ID réel de l'utilisateur connecté
-
     try {
-      await addComment(post.id, user_id, newComment);
+      await addComment(post.id, userId, newComment);
       setNewComment("");
       loadComments();
     } catch (err) {
       console.error("Erreur d'ajout du commentaire :", err);
+    }
+  };
+
+  const loadLikes = async () => {
+    try {
+      const countRes = await getLikesCount(post.id);
+      const likedRes = await hasUserLiked(post.id, userId);
+      setLikesCount(countRes.total);
+      setLiked(likedRes.liked);
+    } catch (err) {
+      console.error("Erreur de chargement des likes :", err);
+    }
+  };
+
+  const toggleLike = async () => {
+    try {
+      if (liked) {
+        await unlikePost(post.id, userId);
+      } else {
+        await likePost(post.id, userId);
+      }
+      loadLikes();
+    } catch (err) {
+      console.error("Erreur lors du like/unlike :", err);
     }
   };
 
@@ -83,6 +116,21 @@ export default function Post({ post }) {
           })}
         </div>
       )}
+
+      {/* 🔽 Section Likes */}
+      <div className="mt-4 flex items-center gap-2">
+        <button
+          onClick={toggleLike}
+          className={`px-3 py-1 rounded ${
+            liked ? "bg-red-500 text-white" : "bg-gray-200 text-gray-800"
+          }`}
+        >
+          {liked ? "Unlike" : "Like"}
+        </button>
+        <span className="text-gray-700">
+          {likesCount} like{likesCount !== 1 ? "s" : ""}
+        </span>
+      </div>
 
       {/* 🔽 Section Commentaires */}
       <div className="mt-6">
