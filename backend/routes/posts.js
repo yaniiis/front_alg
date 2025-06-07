@@ -5,6 +5,8 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
+
+
 // 📁 Configuration du stockage avec Multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -95,4 +97,48 @@ router.post("/media", async (req, res) => {
   }
 });
 
+
+// ✅ ✅ ✅ NOUVEAU : Récupérer les commentaires d’un post
+router.get("/:postId/comments", async (req, res) => {
+  const { postId } = req.params;
+  try {
+    const result = await pool.query(
+      `SELECT comments.*, users.username FROM comments
+        JOIN users ON comments.user_id = users.id
+        WHERE comments.post_id = $1
+        ORDER BY comments.created_at ASC
+        `,
+      [postId]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Erreur récupération des commentaires :", err);
+    res.status(500).send("Erreur serveur");
+  }
+});
+
+// ✅ ✅ ✅ NOUVEAU : Ajouter un commentaire à un post
+router.post("/:postId/comments", async (req, res) => {
+  const { postId } = req.params;
+  const { user_id, content } = req.body;
+
+  if (!user_id || !content) {
+    return res.status(400).json({ error: "user_id et content requis" });
+  }
+
+  try {
+    const result = await pool.query(
+      `INSERT INTO comments (post_id, user_id, content)
+       VALUES ($1, $2, $3)
+       RETURNING *`,
+      [postId, user_id, content]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error("Erreur ajout commentaire :", err);
+    res.status(500).send("Erreur serveur");
+  }
+});
+
 module.exports = router;
+
