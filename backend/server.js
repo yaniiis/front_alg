@@ -7,8 +7,16 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
-app.use("/uploads", express.static("uploads")); // accès aux fichiers uploadés
+app.use("/uploads", express.static("uploads")); 
 
+const likesRoutes = require("./routes/likes");
+app.use("/api/posts", likesRoutes);
+
+const notificationsRoutes = require("./routes/notifications");
+app.use("/notifications", notificationsRoutes);
+
+const userRouter = require("./routes/users");
+app.use("/users", userRouter);
 
 const likesRoutes = require("./routes/likes");
 app.use("/api/posts", likesRoutes);
@@ -24,6 +32,7 @@ app.use("/friends", friendsRouter);
 
 const suggestionsRouter = require("./routes/suggestions");
 app.use("/suggestions", suggestionsRouter);
+
 
 const userProfileRouter = require("./routes/userProfile");
 app.use("/userProfile", userProfileRouter);

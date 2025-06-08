@@ -41,16 +41,39 @@ router.post("/", async (req, res) => {
   }
 
   try {
+    // Insérer le message
     const result = await pool.query(
-      `INSERT INTO messages (sender_id, receiver_id, content) VALUES ($1, $2, $3) RETURNING *`,
+      `INSERT INTO messages (sender_id, receiver_id, content)
+       VALUES ($1, $2, $3)
+       RETURNING *`,
       [sender_id, receiver_id, content]
     );
+
+    // Récupérer le username de l'expéditeur
+    const userResult = await pool.query(
+      "SELECT username FROM users WHERE id = $1",
+      [sender_id]
+    );
+
+    if (userResult.rows.length > 0) {
+      const username = userResult.rows[0].username;
+      const notifContent = `${username} sent you a message.`;
+
+      // Insérer la notification pour le destinataire
+      await pool.query(
+        `INSERT INTO notifications (user_id, type, content)
+         VALUES ($1, 'message', $2)`,
+        [receiver_id, notifContent]
+      );
+    }
+
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error("Erreur insertion message:", err);
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
+
 
 
 module.exports = router;
