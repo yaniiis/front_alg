@@ -4,26 +4,44 @@ import Sidebar from "../components/Sidebar";
 
 export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
-  const [user, setUser] = useState({
-    name: "Jean Dupont",
-    email: "jean.dupont@example.com",
-    phone: "06 12 34 56 78",
-  });
+  const [user, setUser] = useState(null);
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
-    window.scrollTo(0, 0); // Scroll to top on load
-  }, []);
+    window.scrollTo(0, 0);
+    fetch(`http://localhost:3001/profile/${userId}`)
+      .then((res) => res.json())
+      .then((data) => setUser(data))
+      .catch((err) => {
+        console.error("Erreur lors du chargement du profil :", err);
+      });
+  }, [userId]);
 
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsEditing(false);
-    console.log("Profile saved:", user);
+    try {
+      const res = await fetch(`http://localhost:3001/profile/${userId}/update`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(user),
+      });
+      if (!res.ok) throw new Error("Erreur lors de la sauvegarde");
+      setIsEditing(false);
+    } catch (err) {
+      console.error(err);
+    }
   };
-          
+
+  if (!user) {
+    return (
+      <div className="ml-60 p-6 text-center text-gray-600">Chargement du profil...</div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-blue-200 p-4">
       <Sidebar />
@@ -34,60 +52,13 @@ export default function Profile() {
           transition={{ duration: 0.4 }}
           className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-lg mt-10"
         >
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">User Profile</h2>
+          <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+            User Profile
+          </h2>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div>
-              <label className="block text-gray-600 mb-1">Name</label>
-              <input
-                type="text"
-                name="name"
-                value={user.name}
-                onChange={handleChange}
-                disabled={!isEditing}
-                className={`w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  isEditing ? "bg-white" : "bg-gray-100 cursor-not-allowed"
-                }`}
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-600 mb-1">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={user.email}
-                onChange={handleChange}
-                disabled={!isEditing}
-                className={`w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  isEditing ? "bg-white" : "bg-gray-100 cursor-not-allowed"
-                }`}
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-600 mb-1">Phone</label>
-              <input
-                type="tel"
-                name="phone"
-                value={user.phone}
-                onChange={handleChange}
-                disabled={!isEditing}
-                className={`w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  isEditing ? "bg-white" : "bg-gray-100 cursor-not-allowed"
-                }`}
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-600 mb-1">Password</label>
-              <input
-                type="password"
-                name="password"
-                value={"**********"}
-                disabled
-                className="w-full p-3 border rounded bg-gray-100 cursor-not-allowed"
-              />
-            </div>
+            <InputField label="Username" name="username" value={user.username} onChange={handleChange} isEditing={isEditing} />
+            <InputField label="Email" name="email" value={user.email} onChange={handleChange} isEditing={isEditing} />
+            <InputField label="Bio" name="bio" value={user.bio || ""} onChange={handleChange} isEditing={isEditing} />
 
             <div className="flex justify-end gap-2 mt-4">
               {isEditing ? (
@@ -119,6 +90,24 @@ export default function Profile() {
           </form>
         </motion.div>
       </div>
+    </div>
+  );
+}
+
+function InputField({ label, name, value, onChange, isEditing }) {
+  return (
+    <div>
+      <label className="block text-gray-600 mb-1">{label}</label>
+      <input
+        type="text"
+        name={name}
+        value={value}
+        onChange={onChange}
+        disabled={!isEditing}
+        className={`w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+          isEditing ? "bg-white" : "bg-gray-100 cursor-not-allowed"
+        }`}
+      />
     </div>
   );
 }

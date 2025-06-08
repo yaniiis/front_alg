@@ -8,7 +8,7 @@ import Messages from "./pages/Messages";
 import FriendsList from "./pages/FriendsList";
 import Notification from "./pages/Notification";
 import SearchUsers from "./pages/SearchUsers";
-
+import UserProfile from "./pages/UserProfile";
 
 export default function App() {
   return (
@@ -16,14 +16,16 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/notification" element={<Notification />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} /> 
         <Route path="/feed" element={<Feed />} />
         <Route path="/suggestions" element={<Suggestions />} />
         <Route path="/messages" element={<Messages />} />
-        <Route path="/FriendsList/:userId" element={<FriendsList />} />
+        <Route path="/FriendsList" element={<FriendsList />} />
         <Route path="/Suggestions/:userId" element={<Suggestions />} />
         <Route path="/search" element={<SearchUsers />} /> 
+        <Route path="/UserProfile/:userId" element={<UserProfile />} />
 
       </Routes>
     </BrowserRouter>

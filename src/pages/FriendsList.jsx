@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 
 export default function FriendsList() {
-  const { userId } = useParams();
+  const userId = localStorage.getItem("userId");
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     async function fetchFriends() {
+      console.log("user id "+ userId);
       try {
         const response = await fetch(`http://localhost:3001/friends/${userId}`);
         if (!response.ok) {

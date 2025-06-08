@@ -15,7 +15,9 @@ export default function Messages() {
 
   // Chargement des messages depuis le backend au montage du composant
   useEffect(() => {
-    const userId = 10; // Remplace par l'id de l'utilisateur connecté
+
+    const userId = localStorage.getItem("userId"); // Remplace par l'id de l'utilisateur connecté
+
     axios
       .get(`http://localhost:3001/messages/${userId}`)
       .then((res) => {
