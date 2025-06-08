@@ -15,6 +15,7 @@ const friendsRouter = require("./routes/friends");
 const suggestionsRouter = require("./routes/suggestions");
 const likesRoutes = require("./routes/likes");
 const notificationsRoutes = require("./routes/notifications");
+const userRouter = require("./routes/users");
 
 
 // ⚠️ Pas besoin de commentsRoutes séparé si c’est déjà géré dans /routes/posts.js
@@ -24,6 +25,7 @@ app.use("/friends", friendsRouter);
 app.use("/suggestions", suggestionsRouter);
 app.use("/api/posts", likesRoutes);
 app.use("/notifications", notificationsRoutes);
+app.use("/users", userRouter);
 
 // Lancement du serveur
 const PORT = 3001;

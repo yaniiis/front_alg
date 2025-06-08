@@ -11,7 +11,7 @@ export default function Notifications() {
   }, []);
 
   const fetchNotifications = () => {
-    fetch("http://localhost:3001/notifications/10") // Remplace 10 par userId dynamique si besoin
+    fetch("http://localhost:3001/notifications/11") // Remplace 10 par userId dynamique si besoin
       .then((res) => res.json())
       .then((data) => setNotifications(data))
       .catch((err) => console.error("Erreur fetch notifications :", err));

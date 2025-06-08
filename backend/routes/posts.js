@@ -127,18 +127,52 @@ router.post("/:postId/comments", async (req, res) => {
   }
 
   try {
+    // Ajouter le commentaire
     const result = await pool.query(
       `INSERT INTO comments (post_id, user_id, content)
        VALUES ($1, $2, $3)
        RETURNING *`,
       [postId, user_id, content]
     );
+
+    // Récupérer le propriétaire du post
+    const postResult = await pool.query(
+      "SELECT user_id FROM posts WHERE id = $1",
+      [postId]
+    );
+
+    if (postResult.rows.length > 0) {
+      const postOwnerId = postResult.rows[0].user_id;
+
+      // Ne pas notifier si l'auteur du commentaire est aussi le propriétaire
+      if (user_id !== postOwnerId) {
+        // Récupérer le username de l’auteur du commentaire
+        const userResult = await pool.query(
+          "SELECT username FROM users WHERE id = $1",
+          [user_id]
+        );
+
+        if (userResult.rows.length > 0) {
+          const username = userResult.rows[0].username;
+          const notifContent = `${username} commented on your post.`;
+
+          // Insertion de la notification
+          await pool.query(
+            `INSERT INTO notifications (user_id, type, content)
+             VALUES ($1, 'comment', $2)`,
+            [postOwnerId, notifContent]
+          );
+        }
+      }
+    }
+
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error("Erreur ajout commentaire :", err);
     res.status(500).send("Erreur serveur");
   }
 });
+
 
 module.exports = router;
 

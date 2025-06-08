@@ -7,6 +7,7 @@ import Feed from "./pages/Feed";
 import Messages from "./pages/Messages"; 
 import FriendsList from "./pages/FriendsList";
 import Notification from "./pages/Notification";
+import SearchUsers from "./pages/SearchUsers";
 
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="/messages" element={<Messages />} />
         <Route path="/FriendsList/:userId" element={<FriendsList />} />
         <Route path="/Suggestions/:userId" element={<Suggestions />} />
+        <Route path="/search" element={<SearchUsers />} /> 
 
       </Routes>
     </BrowserRouter>

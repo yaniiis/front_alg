@@ -34,6 +34,13 @@ export default function Sidebar() {
             Notification 
           </Link>
           <Link
+            to="/search "
+            className="flex items-center gap-2 text-gray-700 hover:text-indigo-600 transition"
+          >
+            <Users size={20} />
+            SearchUsers 
+          </Link>
+          <Link
             to="/suggestions"
             className="flex items-center gap-2 text-gray-700 hover:text-indigo-600 transition"
           >
