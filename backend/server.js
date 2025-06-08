@@ -8,7 +8,6 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
 
-
 // Routes
 const postsRouter = require("./routes/posts");
 app.use("/posts", postsRouter);
@@ -34,7 +33,11 @@ app.use("/register", registerRoute);
 const friend_requestsRouter = require("./routes/friendRequest");
 app.use("/friendRequest", friend_requestsRouter); 
 
-// Démarrage serveur
+
+const profileRouter = require("./routes/profile");
+app.use("/profile", profileRouter); 
+
+
 app.listen(3001, () => {
   console.log("Serveur backend démarré sur http://localhost:3001");
 });
