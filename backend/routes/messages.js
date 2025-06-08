@@ -31,4 +31,26 @@ router.get('/:userId', async (req, res) => {
   }
 });
 
+
+// POST /messages : insérer un message en base
+router.post("/", async (req, res) => {
+  const { sender_id, receiver_id, content } = req.body;
+
+  if (!sender_id || !receiver_id || !content) {
+    return res.status(400).json({ error: "Champs manquants" });
+  }
+
+  try {
+    const result = await pool.query(
+      `INSERT INTO messages (sender_id, receiver_id, content) VALUES ($1, $2, $3) RETURNING *`,
+      [sender_id, receiver_id, content]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error("Erreur insertion message:", err);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+
+
 module.exports = router;

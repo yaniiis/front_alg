@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import Sidebar from "../components/Sidebar";
 
 export default function Messages() {
   const [conversations, setConversations] = useState([]);
@@ -14,7 +15,9 @@ export default function Messages() {
 
   // Chargement des messages depuis le backend au montage du composant
   useEffect(() => {
+
     const userId = localStorage.getItem("userId"); // Remplace par l'id de l'utilisateur connecté
+
     axios
       .get(`http://localhost:3001/messages/${userId}`)
       .then((res) => {
@@ -65,34 +68,59 @@ export default function Messages() {
   const handleSendMessage = () => {
     if (!newMessage.trim()) return;
 
-    // Ici tu peux faire un POST vers le backend pour enregistrer le message avant de mettre à jour le front
+    const senderId = 10; // Remplace par l'ID réel de l'utilisateur connecté
+    const receiverId = selectedConvId; // id du partenaire de conversation
 
-    const updatedConversations = conversations.map((conv) => {
-      if (conv.id === selectedConvId) {
-        return {
-          ...conv,
-          messages: [
-            ...conv.messages,
-            {
-              id: conv.messages.length + 1,
-              sender: "You",
-              text: newMessage.trim(),
-              time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-            },
-          ],
-        };
-      }
-      return conv;
-    });
+    axios
+      .post("http://localhost:3001/messages", {
+        sender_id: senderId,
+        receiver_id: receiverId,
+        content: newMessage.trim(),
+      })
+      .then((res) => {
+        const insertedMessage = res.data;
 
-    setConversations(updatedConversations);
-    setNewMessage("");
+        const updatedConversations = conversations.map((conv) => {
+          if (conv.id === selectedConvId) {
+            return {
+              ...conv,
+              messages: [
+                ...conv.messages,
+                {
+                  id: insertedMessage.id,
+                  sender: "You",
+                  text: insertedMessage.content,
+                  time: new Date(insertedMessage.sent_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                },
+              ],
+            };
+          }
+          return conv;
+        });
+
+        setConversations(updatedConversations);
+        setNewMessage("");
+      })
+      .catch((error) => {
+        if (error.response) {
+          // Erreur renvoyée par le serveur (code HTTP, message)
+          console.error("Erreur serveur:", error.response.status, error.response.data);
+        } else if (error.request) {
+          // Requête envoyée mais pas de réponse reçue
+          console.error("Pas de réponse du serveur:", error.request);
+        } else {
+          // Erreur dans la configuration de la requête axios
+          console.error("Erreur Axios:", error.message);
+        }
+      });
+
   };
 
   return (
     <div className="flex h-screen bg-gray-100">
+      <Sidebar />
       {/* Sidebar conversations */}
-      <div className="w-72 bg-white border-r border-gray-300 flex flex-col">
+      <div className="w-72 bg-white border-r border-gray-300 flex flex-col ml-60">
         <h2 className="text-xl font-bold p-4 border-b border-gray-300">Messages</h2>
         <div className="flex-1 overflow-auto">
           {conversations.map((conv) => (
@@ -119,7 +147,9 @@ export default function Messages() {
             <div
               key={msg.id}
               className={`max-w-xs p-3 rounded-lg ${
-                msg.sender === "You" ? "bg-indigo-500 text-white self-end" : "bg-white text-gray-800 self-start"
+                msg.sender === "You"
+                  ? "bg-indigo-500 text-white self-end"
+                  : "bg-white text-gray-800 self-start"
               }`}
             >
               <p>{msg.text}</p>
@@ -141,7 +171,12 @@ export default function Messages() {
           />
           <button
             onClick={handleSendMessage}
-            className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
+            disabled={!newMessage.trim()}
+            className={`px-4 py-2 rounded transition ${
+              newMessage.trim()
+                ? "bg-indigo-600 text-white hover:bg-indigo-700"
+                : "bg-gray-300 cursor-not-allowed"
+            }`}
           >
             Envoyer
           </button>
