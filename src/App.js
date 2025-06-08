@@ -6,6 +6,7 @@ import Profile from "./pages/Profile";
 import Feed from "./pages/Feed"; 
 import Messages from "./pages/Messages"; 
 import FriendsList from "./pages/FriendsList";
+import Notification from "./pages/Notification";
 
 
 export default function App() {
@@ -13,6 +14,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/notification" element={<Notification />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} /> 
         <Route path="/feed" element={<Feed />} />
