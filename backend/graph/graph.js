@@ -6,28 +6,41 @@ class Graph {
   addUser(user) {
     if (!this.nodes.has(user.id)) {
       this.nodes.set(user.id, {
-        ...user, // On ajoute également l'objet user dans la map pour pouvoir accéder à ses champs 
-        friends: new Set(),// ses amis
-        interests: new Set(),// ses interet 
-        interactions: new Set(),// les identifiants des user avec qui user a eut une interaction
+        ...user, // toutes les infos utilisateur (username, bio, etc.)
+        friends: new Set(), // amis directs
+        interests: new Set(), // centres d’intérêt
+        interactions: new Set(), // interactions (likes, commentaires, etc.)
+        blocked: new Set(), // utilisateurs bloqués par cet utilisateur
       });
     }
   }
 
   addFriendship(user1, user2) {
-    this.nodes.get(user1)?.friends.add(user2);
-    this.nodes.get(user2)?.friends.add(user1);
+    if (this.nodes.has(user1) && this.nodes.has(user2)) {
+      this.nodes.get(user1).friends.add(user2);
+      this.nodes.get(user2).friends.add(user1);
+    }
   }
 
   addInteraction(user1, user2) {
-    this.nodes.get(user1)?.interactions.add(user2);
+    if (this.nodes.has(user1)) {
+      this.nodes.get(user1).interactions.add(user2);
+    }
   }
 
   addInterest(userId, interest) {
-    this.nodes.get(userId)?.interests.add(interest);
+    if (this.nodes.has(userId)) {
+      this.nodes.get(userId).interests.add(interest);
+    }
   }
 
-  getUser(userId  ) {
+  addBlocked(userId, blockedId) {
+    if (this.nodes.has(userId)) {
+      this.nodes.get(userId).blocked.add(blockedId);
+    }
+  }
+
+  getUser(userId) {
     return this.nodes.get(userId);
   }
 

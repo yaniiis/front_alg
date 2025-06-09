@@ -9,7 +9,7 @@ export default function Sidebar() {
           to="/feed"
           className="text-2xl font-bold text-indigo-700 mb-10 block hover:text-indigo-600 transition"
         >
-          MyNetwork
+          NetForth
         </Link>
         <nav className="flex flex-col gap-4">
           <Link
@@ -46,6 +46,13 @@ export default function Sidebar() {
           >
             <Users size={20} />
             Suggestions
+          </Link>
+          <Link
+            to="/FriendsList"
+            className="flex items-center gap-2 text-gray-700 hover:text-indigo-600 transition"
+          >
+            <Users size={20} />
+            Your Network
           </Link>
           <Link
             to="/profile"

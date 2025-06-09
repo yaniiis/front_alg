@@ -7,7 +7,7 @@ function suggestFriends(graph, userId) {
   for (const friendId of user.friends) {
     const friend = graph.getUser(friendId);
     for (const friendOfFriendId of friend.friends) {
-      if (friendOfFriendId === userId || user.friends.has(friendOfFriendId)) continue;
+      if (friendOfFriendId === userId || user.friends.has(friendOfFriendId) || user.blocked.has(friendOfFriendId)) continue;
 
       const fof = graph.getUser(friendOfFriendId);
       let score = 1;
@@ -22,7 +22,7 @@ function suggestFriends(graph, userId) {
   }
 
   return [...suggestions.entries()]
-    .sort((a, b) => b[1] - a[1])
+    .sort((a, b) => b[1] - a[1])// on peut utiliser slice pour ne proposer qu'un nombre limité de profils
     .map(([id]) => graph.getUser(id));
 }
 

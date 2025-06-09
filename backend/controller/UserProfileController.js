@@ -19,7 +19,7 @@ exports.getUserPosts = async (req, res) => {
     res.json(rows);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Erreur lors du chargement des posts" });
+    res.status(500).json({ error: "Erreur serveur" });
   }
 
 };
@@ -83,3 +83,41 @@ exports.friendRequest = async (req, res) => {
 };
 
 
+exports.blockUser = async (req, res) => {
+  const blockerId = parseInt(req.body.blocker_id);
+  const blockedId = parseInt(req.params.userId);
+
+  if (!blockerId || !blockedId || blockerId === blockedId) {
+    return res.status(400).json({ message: "Bad request" });
+  }
+
+  try {
+    await db.query(
+      `DELETE FROM friend_requests 
+       WHERE (sender_id = $1 AND receiver_id = $2) 
+          OR (sender_id = $2 AND receiver_id = $1)`,
+      [blockerId, blockedId]
+    );
+
+    const alreadyBlocked = await db.query(
+      `SELECT * FROM blocked_users WHERE blocker_id = $1 AND blocked_id = $2`,
+      [blockerId, blockedId]
+    );
+
+    if (alreadyBlocked.rows.length > 0) {
+      return res.status(400).json({ message: "user already blocked ." });
+    }
+
+    await db.query(
+      `INSERT INTO blocked_users (blocker_id, blocked_id)
+       VALUES ($1, $2)`,
+      [blockerId, blockedId]
+    );
+
+    res.status(201).json({ message: "Utilisateur bloqué." });
+
+  } catch (err) {
+    console.error("Erreur lors du blocage :", err);
+    res.status(500).json({ message: "Erreur serveur." });
+  }
+};

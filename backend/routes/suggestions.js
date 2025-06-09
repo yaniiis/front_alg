@@ -21,7 +21,11 @@ router.get("/:userId", async (req, res) => {
   const interests = await db.query("SELECT user_id, interest FROM user_interests");
   interests.rows.forEach(i => graph.addInterest(i.user_id, i.interest));
 
+  const blocks = await db.query("SELECT blocker_id, blocked_id FROM blocked_users");
+  blocks.rows.forEach(b => graph.addBlocked(b.blocker_id, b.blocked_id));
+
   const suggestions = suggestFriends(graph, userId);
+  console.log(blocks);
 
   res.json(suggestions);
 });
