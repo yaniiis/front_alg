@@ -23,7 +23,6 @@ function suggestFriends(graph, userId) {
 
   return [...suggestions.entries()]
     .sort((a, b) => b[1] - a[1])
-    .slice(0, topN)
     .map(([id]) => graph.getUser(id));
 }
 
