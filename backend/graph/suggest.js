@@ -1,30 +1,28 @@
-// backend/graph/suggest.js
-function suggestFriends(graph, userId, topN = 5) {
-  const user = graph.getUser(userId);
+function suggestFriends(graph, friendOfFriendId) {
+  const user = graph.getUser(friendOfFriendId);
   if (!user) return [];
 
   const suggestions = new Map();
 
   for (const friendId of user.friends) {
     const friend = graph.getUser(friendId);
-    for (const fofId of friend.friends) {
-      if (fofId === userId || user.friends.has(fofId)) continue;
+    for (const friendOfFriendId of friend.friends) {
+      if (friendOfFriendId === friendOfFriendId || user.friends.has(friendOfFriendId)) continue;
 
-      const fof = graph.getUser(fofId);
+      const friendOfFriend = graph.getUser(friendOfFriendId);
       let score = 1;
 
-      const commonInterests = [...user.interests].filter(i => fof.interests.has(i));
+      const commonInterests = [...user.interests].filter(i => friendOfFriend.interests.has(i));
       score += commonInterests.length * 2;
 
-      if (user.interactions.has(fofId) || fof.interactions.has(userId)) score += 2;
+      if (user.interactions.has(friendOfFriendId) || friendOfFriend.interactions.has(friendOfFriendId)) score += 2;
 
-      suggestions.set(fofId, (suggestions.get(fofId) || 0) + score);
+      suggestions.set(friendOfFriendId, (suggestions.get(friendOfFriendId) || 0) + score);
     }
   }
 
   return [...suggestions.entries()]
     .sort((a, b) => b[1] - a[1])
-    .slice(0, topN)
     .map(([id]) => graph.getUser(id));
 }
 

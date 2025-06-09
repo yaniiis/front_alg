@@ -1,4 +1,3 @@
-// backend/graph/graph.js
 class Graph {
   constructor() {
     this.nodes = new Map();
@@ -7,29 +6,29 @@ class Graph {
   addUser(user) {
     if (!this.nodes.has(user.id)) {
       this.nodes.set(user.id, {
-        ...user,
-        friends: new Set(),
-        interests: new Set(),
-        interactions: new Set(),
+        ...user, // On ajoute également l'objet user dans la map pour pouvoir accéder à ses champs 
+        friends: new Set(),// ses amis
+        interests: new Set(),// ses interet 
+        interactions: new Set(),// les identifiants des user avec qui user a eut une interaction
       });
     }
   }
 
-  addFriendship(a, b) {
-    this.nodes.get(a)?.friends.add(b);
-    this.nodes.get(b)?.friends.add(a);
+  addFriendship(user1, user2) {
+    this.nodes.get(user1)?.friends.add(user2);
+    this.nodes.get(user2)?.friends.add(user1);
   }
 
-  addInteraction(from, to) {
-    this.nodes.get(from)?.interactions.add(to);
+  addInteraction(user1, user2) {
+    this.nodes.get(user1)?.interactions.add(user2);
   }
 
-  addInterest(id, interest) {
-    this.nodes.get(id)?.interests.add(interest);
+  addInterest(userId, interest) {
+    this.nodes.get(userId)?.interests.add(interest);
   }
 
-  getUser(id) {
-    return this.nodes.get(id);
+  getUser(userId  ) {
+    return this.nodes.get(userId);
   }
 
   getAllUsers() {

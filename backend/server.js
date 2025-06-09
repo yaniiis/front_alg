@@ -9,8 +9,6 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use("/uploads", express.static("uploads")); 
 
-const likesRoutes = require("./routes/likes");
-app.use("/api/posts", likesRoutes);
 
 const notificationsRoutes = require("./routes/notifications");
 app.use("/notifications", notificationsRoutes);
