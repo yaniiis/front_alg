@@ -42,7 +42,7 @@ export default function Feed() {
     e.preventDefault();
     try {
       // Replace with actual user_id
-      const user_id = 10;
+      const user_id = localStorage.getItem("userId");
 
       const newPost = await createPost({ title, content, user_id });
 
@@ -63,13 +63,13 @@ export default function Feed() {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-100 p-4">
-      <Sidebar />
-      <div className="ml-60 flex-1 bg-gray-100 p-6 overflow-y-auto">
-        <h1 className="text-3xl font-bold text-center mb-6">News Feed</h1>
+return (
+  <div className="min-h-screen bg-gradient-to-br from-gray-100 to-blue-200">
+    <Sidebar />
+    <div className="ml-60 flex-1 p-6 overflow-y-auto min-h-screen bg-transparent">
+      <h1 className="text-3xl font-bold text-center mb-6">News Feed</h1>
 
-        <div className="flex justify-center mb-6">
+      <div className="flex justify-center mb-6">
           <button
             onClick={handleToggleForm}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"

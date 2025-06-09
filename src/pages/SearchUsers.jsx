@@ -81,11 +81,7 @@ export default function SearchUsers() {
                     className="border p-4 rounded shadow-sm bg-gray-50 hover:bg-gray-100 transition"
                   >
                     <div className="flex items-center gap-4">
-                      <img
-                        src={user.avatar_url || "/default-avatar.png"}
-                        alt={user.username}
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
+
                       <div>
                         <p className="font-semibold text-gray-800">@{user.username}</p>
                         {user.bio && (

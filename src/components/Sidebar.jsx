@@ -1,7 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Home, User, Users, LogOut } from "lucide-react";
 
 export default function Sidebar() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    navigate("/login");
+  };
+
   return (
     <div className="h-screen w-60 bg-white shadow-xl fixed top-0 left-0 p-6 flex flex-col justify-between">
       <div>
@@ -9,7 +17,7 @@ export default function Sidebar() {
           to="/feed"
           className="text-2xl font-bold text-indigo-700 mb-10 block hover:text-indigo-600 transition"
         >
-          NetForth
+          ITalk
         </Link>
         <nav className="flex flex-col gap-4">
           <Link
@@ -27,18 +35,18 @@ export default function Sidebar() {
             Message
           </Link>
           <Link
-            to="/notification "
+            to="/notification"
             className="flex items-center gap-2 text-gray-700 hover:text-indigo-600 transition"
           >
             <Users size={20} />
-            Notification 
+            Notification
           </Link>
           <Link
-            to="/search "
+            to="/search"
             className="flex items-center gap-2 text-gray-700 hover:text-indigo-600 transition"
           >
             <Users size={20} />
-            SearchUsers 
+            SearchUsers
           </Link>
           <Link
             to="/suggestions"
@@ -64,7 +72,7 @@ export default function Sidebar() {
         </nav>
       </div>
       <button
-        onClick={() => alert("Simulated logout")}
+        onClick={handleLogout}
         className="flex items-center gap-2 text-red-500 hover:text-red-600 transition"
       >
         <LogOut size={20} />

@@ -11,7 +11,8 @@ export default function Notifications() {
   }, []);
 
   const fetchNotifications = () => {
-    fetch("http://localhost:3001/notifications/11") // Remplace 10 par userId dynamique si besoin
+    const userId = localStorage.getItem("userId");
+    fetch(`http://localhost:3001/notifications/${userId}`)
       .then((res) => res.json())
       .then((data) => setNotifications(data))
       .catch((err) => console.error("Erreur fetch notifications :", err));
