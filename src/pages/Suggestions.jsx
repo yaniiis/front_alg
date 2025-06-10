@@ -72,24 +72,11 @@ export default function Suggestions() {
                 transition={{ duration: 0.4 }}
                 className="bg-white rounded-xl shadow-md p-4 flex items-center gap-4 cursor-pointer hover:bg-gray-100"
               >
-                <img
-                  src={user.avatar_url || "https://via.placeholder.com/64"}
-                  alt={user.username}
-                  className="w-16 h-16 rounded-full object-cover"
-                />
+
                 <div className="flex-1">
                   <h3 className="font-semibold text-lg text-indigo-700">{user.username}</h3>
                   <p className="text-gray-600">{user.bio || "No bio available."}</p>
                 </div>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleAddFriend(user.id);
-                  }}
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl text-sm"
-                >
-                  Add
-                </button>
               </motion.div>
             ))}
           </div>

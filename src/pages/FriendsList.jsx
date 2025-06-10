@@ -48,21 +48,17 @@ export default function FriendsList() {
         ) : (
           <ul className="space-y-4">
             {friends.map((friend) => (
-              <li
-                key={friend.id}
-                onClick={() => navigate(`/userProfile/${friend.id}`)}
-                className="cursor-pointer bg-transparent p-4 rounded flex items-center gap-4 hover:bg-blue-100 transition"
-              >
-                <img
-                  src={friend.avatar_url || "https://via.placeholder.com/50"}
-                  alt={friend.username}
-                  className="w-12 h-12 rounded-full object-cover"
-                />
-                <div>
-                  <p className="font-semibold">{friend.username}</p>
-                  <p className="text-sm text-gray-700">{friend.bio}</p>
-                </div>
-              </li>
+          <li
+            key={friend.id}
+            onClick={() => navigate(`/userProfile/${friend.id}`)}
+            className="cursor-pointer bg-white p-4 rounded-xl shadow hover:bg-blue-100 transition flex items-center gap-4"
+          >
+            <div>
+              <p className="font-semibold text-blue-800">{friend.username}</p>
+              <p className="text-sm text-gray-600">{friend.bio}</p>
+            </div>
+          </li>
+
             ))}
           </ul>
         )}

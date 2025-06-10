@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Sidebar from "../components/Sidebar";
+import { useNavigate } from "react-router-dom";
 
 export default function SearchUsers() {
+    const navigate = useNavigate();
+
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -76,20 +79,20 @@ export default function SearchUsers() {
                 <p className="text-center text-gray-500">No users found.</p>
               ) : (
                 results.map((user) => (
-                  <li
-                    key={user.id}
-                    className="border p-4 rounded shadow-sm bg-gray-50 hover:bg-gray-100 transition"
-                  >
-                    <div className="flex items-center gap-4">
-
-                      <div>
-                        <p className="font-semibold text-gray-800">@{user.username}</p>
-                        {user.bio && (
-                          <p className="text-gray-600 text-sm">{user.bio}</p>
-                        )}
-                      </div>
+                <li
+                  key={user.id}
+                  className="border p-4 rounded shadow-sm bg-gray-50 hover:bg-gray-100 transition cursor-pointer"
+                  onClick={() => navigate(`/userProfile/${user.id}`)}
+                >
+                  <div className="flex items-center gap-4">
+                    <div>
+                      <p className="font-semibold text-gray-800">@{user.username}</p>
+                      {user.bio && (
+                        <p className="text-gray-600 text-sm">{user.bio}</p>
+                      )}
                     </div>
-                  </li>
+                  </div>
+                </li>
                 ))
               )}
             </ul>
