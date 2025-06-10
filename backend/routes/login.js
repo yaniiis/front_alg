@@ -1,4 +1,5 @@
 const express = require("express");
+const bcrypt = require("bcrypt");
 const pool = require("../db");
 
 const router = express.Router();
@@ -6,23 +7,32 @@ const router = express.Router();
 router.post("/", async (req, res) => {
   const { email, password } = req.body;
 
-  if (!email || !password) return res.status(400).json({ message: "Champs requis manquants" });
+  if (!email || !password)
+    return res.status(400).json({ message: "Missing required fields" });
 
   try {
-    const result = await pool.query(
-      "SELECT id, username, email FROM users WHERE email = $1 AND password = $2",
-      [email, password]
-    );
+    const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
 
     if (result.rows.length === 0) {
-      return res.status(401).json({ message: "Email ou mot de passe incorrect" });
+      return res.status(401).json({ message: "Incorrect email or password" });
     }
 
     const user = result.rows[0];
-    res.status(200).json({ message: "Connexion réussie", user });
+
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ message: "Incorrect email or password" });
+    }
+
+
+    delete user.password;
+
+    res.status(200).json({ message: "Login successful", user });
   } catch (err) {
-    console.error("Erreur login :", err);
-    res.status(500).json({ message: "Erreur serveur" });
+    console.error("Login error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 

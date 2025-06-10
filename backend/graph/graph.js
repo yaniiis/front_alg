@@ -6,11 +6,11 @@ class Graph {
   addUser(user) {
     if (!this.nodes.has(user.id)) {
       this.nodes.set(user.id, {
-        ...user, // toutes les infos utilisateur (username, bio, etc.)
-        friends: new Set(), // amis directs
-        interests: new Set(), // centres d’intérêt
-        interactions: new Set(), // interactions (likes, commentaires, etc.)
-        blocked: new Set(), // utilisateurs bloqués par cet utilisateur
+        ...user, 
+        friends: new Set(), 
+        interests: new Set(), 
+        interactions: new Set(), 
+        blocked: new Set(), 
       });
     }
   }

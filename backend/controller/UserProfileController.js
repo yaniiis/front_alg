@@ -34,7 +34,6 @@ exports.friendRequest = async (req, res) => {
   }
 
   try {
-    // on va vérifier en premier si la demande d'amis existe déjà
     const doesRelationExist = await db.query(
       `SELECT * FROM friend_requests
        WHERE sender_id = $1 AND receiver_id = $2`,
@@ -45,7 +44,6 @@ exports.friendRequest = async (req, res) => {
       return res.status(400).json({ message: "Demande déjà existante." });
     }
 
-    // Si user A fait une demande à user B mais que User B follow A, on les considère comme amis
     const reciprocalFriendRequest = await db.query(
       `SELECT * FROM friend_requests
        WHERE sender_id = $2 AND receiver_id = $1 AND status='pending' `,
@@ -74,7 +72,21 @@ exports.friendRequest = async (req, res) => {
       [sender_id, targetUserId]
     );
 
-    res.status(201).json({ message:"" });
+    const userResult = await db.query(
+      `SELECT username FROM users WHERE id = $1`,
+      [sender_id]
+    );
+
+    const username = userResult.rows[0]?.username || "Quelqu’un";
+    const content = `${username} vous a envoyé une demande d’ami.`;
+
+    await db.query(
+      `INSERT INTO notifications (user_id, type, content)
+       VALUES ($1, 'friend_request', $2)`,
+      [targetUserId, content]
+    );
+
+    res.status(201).json({ message: "" });
 
   } catch (err) {
     console.error("Erreur lors de la demande d’ami :", err);
@@ -119,5 +131,41 @@ exports.blockUser = async (req, res) => {
   } catch (err) {
     console.error("Erreur lors du blocage :", err);
     res.status(500).json({ message: "Erreur serveur." });
+  }
+};
+
+
+
+exports.friendRequest = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { sender_id } = req.body;
+
+    if (!sender_id) {
+      return res.status(400).json({ error: "sender_id est requis" });
+    }
+
+    // Vérifier d'abord si une demande existe déjà
+    const existingRequests = await db.query(
+      `SELECT * FROM friend_requests 
+       WHERE sender_id = $1 AND receiver_id = $2 AND status = 'pending'`,
+      [sender_id, userId]
+    );
+
+    if (existingRequests.rows.length > 0) {
+      return res.status(400).json({ error: "Une demande est déjà en attente" });
+    }
+
+    // Créer la nouvelle demande
+    await db.query(
+      `INSERT INTO friend_requests (sender_id, receiver_id, status) 
+       VALUES ($1, $2, 'pending')`,
+      [sender_id, userId]
+    );
+
+    res.json({ success: true, message: "Demande d'ami envoyée" });
+  } catch (err) {
+    console.error("Erreur lors de l'envoi de la demande:", err);
+    res.status(500).json({ error: "Erreur serveur" });
   }
 };

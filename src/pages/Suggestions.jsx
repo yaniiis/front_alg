@@ -15,12 +15,12 @@ export default function Suggestions() {
     async function fetchSuggestions() {
       try {
         const response = await fetch(`http://localhost:3001/suggestions/${userId}`);
-        if (!response.ok) throw new Error("Erreur lors du chargement des suggestions");
+        if (!response.ok) throw new Error("Error loading suggestions");
 
         const data = await response.json();
         setSuggestions(Array.isArray(data) ? data : []);
       } catch (error) {
-        console.error("Erreur de fetch :", error);
+        console.error("Fetch error:", error);
         setSuggestions([]);
       } finally {
         setLoading(false);
@@ -40,26 +40,27 @@ export default function Suggestions() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        alert("Erreur : " + errorData.message);
+        alert("Error: " + errorData.message);
         return;
       }
 
-      alert("Demande d'ami envoyée !");
+      alert("Friend request sent!");
     } catch (err) {
-      console.error("Erreur lors de la demande d'ami :", err);
-      alert("Erreur lors de l'envoi de la demande.");
+      console.error("Error sending friend request:", err);
+      alert("Error sending request.");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
+        <div className="min-h-screen bg-gradient-to-br from-gray-100 to-blue-200 p-4">
+
       <Sidebar />
       <div className="ml-60 flex-1 p-6">
-        <h1 className="text-3xl font-bold text-center mb-6">Profils suggérés</h1>
+        <h1 className="text-3xl font-bold text-center mb-6">Suggested Profiles</h1>
         {loading ? (
-          <p className="text-center text-gray-600">Chargement en cours...</p>
+          <p className="text-center text-gray-600">Loading...</p>
         ) : suggestions.length === 0 ? (
-          <p className="text-center text-gray-600">Aucune suggestion pour le moment.</p>
+          <p className="text-center text-gray-600">No suggestions at the moment.</p>
         ) : (
           <div className="max-w-2xl mx-auto flex flex-col gap-6">
             {suggestions.map((user) => (
@@ -71,24 +72,11 @@ export default function Suggestions() {
                 transition={{ duration: 0.4 }}
                 className="bg-white rounded-xl shadow-md p-4 flex items-center gap-4 cursor-pointer hover:bg-gray-100"
               >
-                <img
-                  src={user.avatar_url || "https://via.placeholder.com/64"}
-                  alt={user.username}
-                  className="w-16 h-16 rounded-full object-cover"
-                />
+
                 <div className="flex-1">
                   <h3 className="font-semibold text-lg text-indigo-700">{user.username}</h3>
                   <p className="text-gray-600">{user.bio || "No bio available."}</p>
                 </div>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleAddFriend(user.id);
-                  }}
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl text-sm"
-                >
-                  Ajouter
-                </button>
               </motion.div>
             ))}
           </div>

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db'); // pool Pg, à adapter selon ton projet
 
-// Récupérer tous les messages d'un utilisateur (userId dans params)
+// tous les msg 
 router.get('/:userId', async (req, res) => {
   const userId = parseInt(req.params.userId, 10);
 
@@ -32,7 +32,7 @@ router.get('/:userId', async (req, res) => {
 });
 
 
-// POST /messages : insérer un message en base
+// nv msg 
 router.post("/", async (req, res) => {
   const { sender_id, receiver_id, content } = req.body;
 
@@ -41,7 +41,7 @@ router.post("/", async (req, res) => {
   }
 
   try {
-    // Insérer le message
+
     const result = await pool.query(
       `INSERT INTO messages (sender_id, receiver_id, content)
        VALUES ($1, $2, $3)
@@ -49,7 +49,7 @@ router.post("/", async (req, res) => {
       [sender_id, receiver_id, content]
     );
 
-    // Récupérer le username de l'expéditeur
+
     const userResult = await pool.query(
       "SELECT username FROM users WHERE id = $1",
       [sender_id]
@@ -59,7 +59,7 @@ router.post("/", async (req, res) => {
       const username = userResult.rows[0].username;
       const notifContent = `${username} sent you a message.`;
 
-      // Insérer la notification pour le destinataire
+
       await pool.query(
         `INSERT INTO notifications (user_id, type, content)
          VALUES ($1, 'message', $2)`,

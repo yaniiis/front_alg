@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../db");
 
-// Obtenir le nombre de likes pour un post
+// nb likes
 router.get("/:postId/likes/count", async (req, res) => {
   const { postId } = req.params;
   try {
@@ -17,7 +17,7 @@ router.get("/:postId/likes/count", async (req, res) => {
   }
 });
 
-// Vérifier si un utilisateur a liké un post
+// post deja like ?
 router.get("/:postId/likes/:userId", async (req, res) => {
   const { postId, userId } = req.params;
   try {
@@ -32,15 +32,13 @@ router.get("/:postId/likes/:userId", async (req, res) => {
   }
 });
 
-// Ajouter un like
-// Ajouter un like avec notification
-
+// nv like 
 router.post("/:postId/likes", async (req, res) => {
   const { postId } = req.params;
   const { user_id } = req.body;
 
   try {
-    // Récupérer le propriétaire du post
+
     const postResult = await pool.query(
       "SELECT user_id FROM posts WHERE id = $1",
       [postId]
@@ -52,15 +50,13 @@ router.post("/:postId/likes", async (req, res) => {
 
     const postOwnerId = postResult.rows[0].user_id;
 
-    // Ajouter le like
     await pool.query(
       "INSERT INTO likes (post_id, user_id) VALUES ($1, $2) ON CONFLICT DO NOTHING",
       [postId, user_id]
     );
 
-    // Si ce n'est pas son propre post, on crée la notification
     if (user_id !== postOwnerId) {
-      // Récupérer le username de celui qui a liké
+
       const userResult = await pool.query(
         "SELECT username FROM users WHERE id = $1",
         [user_id]
@@ -86,7 +82,7 @@ router.post("/:postId/likes", async (req, res) => {
 });
 
 
-// Supprimer un like
+// Supprime un like meme en bdd  
 router.delete("/:postId/likes/:userId", async (req, res) => {
   const { postId, userId } = req.params;
   try {

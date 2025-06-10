@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../db"); // Assure-toi que ce fichier gère bien la connexion PostgreSQL
+const db = require("../db");
 
-// 🔹 GET /notifications/:userId - récupérer les notifications d'un utilisateur
+// toutes les notif dun user
 router.get("/:userId", async (req, res) => {
   const userId = req.params.userId;
 
@@ -18,7 +18,7 @@ router.get("/:userId", async (req, res) => {
   }
 });
 
-// 🔹 POST /notifications - créer une notification
+// nv notif 
 router.post("/", async (req, res) => {
   const { user_id, type, content } = req.body;
 
@@ -38,7 +38,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Dans routes/notifications.js
+
 router.patch("/:id/read", async (req, res) => {
   const { id } = req.params;
   try {
@@ -51,7 +51,7 @@ router.patch("/:id/read", async (req, res) => {
 });
 
 
-// Simulation rapide pour accepter/refuser une demande
+
 router.post("/friends/accept", (req, res) => {
   const { notificationId } = req.body;
   console.log(`Demande d’ami ${notificationId} acceptée`);
@@ -78,7 +78,7 @@ router.patch("/:id/read", async (req, res) => {
 
 router.patch("/:id/friend_request", async (req, res) => {
   const { id } = req.params;
-  const { status } = req.body; // 'accepted' ou 'declined'
+  const { status } = req.body; 
 
   if (!['accepted', 'declined'].includes(status)) {
     return res.status(400).json({ message: "Statut invalide" });

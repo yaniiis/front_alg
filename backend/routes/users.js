@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../db");
 
-// Recherche intelligente d'utilisateurs par username
+// Recherche intelligente dun user par username
 router.get("/search", async (req, res) => {
   const { username } = req.query;
 
@@ -11,7 +11,7 @@ router.get("/search", async (req, res) => {
   }
 
   try {
-    // Requête intelligente avec priorité sur les résultats exacts, puis les préfixes, puis les inclusions
+
     const queryText = `
       SELECT id, username, email, avatar_url, bio 
       FROM users 
@@ -27,9 +27,9 @@ router.get("/search", async (req, res) => {
     `;
 
     const values = [
-      username,          // exact match (case-insensitive)
-      `${username}%`,    // starts with
-      `%${username}%`,   // contains
+      username,          // el mismo 
+      `${username}%`,    // commence par 
+      `%${username}%`,   // contient
     ];
 
     const result = await pool.query(queryText, values);

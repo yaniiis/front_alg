@@ -14,7 +14,7 @@ export default function Post({ post }) {
   const [likesCount, setLikesCount] = useState(0);
   const [liked, setLiked] = useState(false);
 
-  const userId = 10; // 🔄 Remplacer par l'ID de l'utilisateur connecté
+  const userId = localStorage.getItem("userId"); 
 
   useEffect(() => {
     loadComments();
@@ -43,29 +43,33 @@ export default function Post({ post }) {
     }
   };
 
-  const loadLikes = async () => {
-    try {
-      const countRes = await getLikesCount(post.id);
-      const likedRes = await hasUserLiked(post.id, userId);
-      setLikesCount(countRes.total);
-      setLiked(likedRes.liked);
-    } catch (err) {
-      console.error("Erreur de chargement des likes :", err);
-    }
-  };
+const loadLikes = async () => {
+  try {
+    const countRes = await getLikesCount(post.id);
+    const likedRes = await hasUserLiked(post.id, userId);
+    setLikesCount(countRes.total);
+    setLiked(likedRes.liked);
+    console.log("loadLikes -> likesCount:", countRes.total, "liked:", likedRes.liked);
+  } catch (err) {
+    console.error("Erreur de chargement des likes :", err);
+  }
+};
+
 
   const toggleLike = async () => {
-    try {
-      if (liked) {
-        await unlikePost(post.id, userId);
-      } else {
-        await likePost(post.id, userId);
-      }
-      loadLikes();
-    } catch (err) {
-      console.error("Erreur lors du like/unlike :", err);
+  console.log("Bouton cliqué, liked =", liked); 
+  try {
+    if (liked) {
+      await unlikePost(post.id, userId);
+    } else {
+      await likePost(post.id, userId);
     }
-  };
+    loadLikes();
+  } catch (err) {
+    console.error("Erreur lors du like/unlike :", err); 
+  }
+};
+
 
   return (
     <motion.div
@@ -117,7 +121,8 @@ export default function Post({ post }) {
         </div>
       )}
 
-      {/* 🔽 Section Likes */}
+
+
       <div className="mt-4 flex items-center gap-2">
         <button
           onClick={toggleLike}
@@ -132,7 +137,6 @@ export default function Post({ post }) {
         </span>
       </div>
 
-      {/* 🔽 Section Commentaires */}
       <div className="mt-6">
         <h4 className="font-semibold mb-2 text-gray-800">Commentaires</h4>
 

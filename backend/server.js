@@ -1,15 +1,13 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const app = express();
 
 app.use(cors());
-app.use(bodyParser.json());
-app.use(express.json());
+app.use(express.json()); // ✅ Un seul middleware pour parser les requêtes JSON
 app.use("/uploads", express.static("uploads")); 
 
-
+// Routes
 const notificationsRoutes = require("./routes/notifications");
 app.use("/notifications", notificationsRoutes);
 
@@ -31,7 +29,6 @@ app.use("/friends", friendsRouter);
 const suggestionsRouter = require("./routes/suggestions");
 app.use("/suggestions", suggestionsRouter);
 
-
 const userProfileRouter = require("./routes/userProfile");
 app.use("/userProfile", userProfileRouter);
 
@@ -44,12 +41,9 @@ app.use("/register", registerRoute);
 const friend_requestsRouter = require("./routes/friendRequest");
 app.use("/friendRequest", friend_requestsRouter); 
 
-
 const profileRouter = require("./routes/profile");
 app.use("/profile", profileRouter); 
-
 
 app.listen(3001, () => {
   console.log("Serveur backend démarré sur http://localhost:3001");
 });
-

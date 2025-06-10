@@ -22,7 +22,7 @@ function suggestFriends(graph, userId) {
   }
 
   return [...suggestions.entries()]
-    .sort((a, b) => b[1] - a[1])// on peut utiliser slice pour ne proposer qu'un nombre limité de profils
+    .sort((a, b) => b[1] - a[1]) // slice pour nombre limité profil
     .map(([id]) => graph.getUser(id));
 }
 
