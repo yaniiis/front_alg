@@ -43,29 +43,33 @@ export default function Post({ post }) {
     }
   };
 
-  const loadLikes = async () => {
-    try {
-      const countRes = await getLikesCount(post.id);
-      const likedRes = await hasUserLiked(post.id, userId);
-      setLikesCount(countRes.total);
-      setLiked(likedRes.liked);
-    } catch (err) {
-      console.error("Erreur de chargement des likes :", err);
-    }
-  };
+const loadLikes = async () => {
+  try {
+    const countRes = await getLikesCount(post.id);
+    const likedRes = await hasUserLiked(post.id, userId);
+    setLikesCount(countRes.total);
+    setLiked(likedRes.liked);
+    console.log("loadLikes -> likesCount:", countRes.total, "liked:", likedRes.liked);
+  } catch (err) {
+    console.error("Erreur de chargement des likes :", err);
+  }
+};
+
 
   const toggleLike = async () => {
-    try {
-      if (liked) {
-        await unlikePost(post.id, userId);
-      } else {
-        await likePost(post.id, userId);
-      }
-      loadLikes();
-    } catch (err) {
-      console.error("Erreur lors du like/unlike :", err);
+  console.log("Bouton cliqué, liked =", liked); // <--- AJOUT
+  try {
+    if (liked) {
+      await unlikePost(post.id, userId);
+    } else {
+      await likePost(post.id, userId);
     }
-  };
+    loadLikes();
+  } catch (err) {
+    console.error("Erreur lors du like/unlike :", err); // <--- devrait déjà être là
+  }
+};
+
 
   return (
     <motion.div
