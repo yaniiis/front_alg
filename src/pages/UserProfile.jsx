@@ -51,7 +51,7 @@ export default function UserProfile() {
     }
   };
 
-  if (!user) return <p className="p-10">Chargement...</p>;
+  if (!user) return <p className="p-10">??...</p>;
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">

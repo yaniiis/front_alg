@@ -14,7 +14,7 @@ export default function Post({ post }) {
   const [likesCount, setLikesCount] = useState(0);
   const [liked, setLiked] = useState(false);
 
-  const userId = 10; // 🔄 Remplacer par l'ID de l'utilisateur connecté
+  const userId = localStorage.getItem("userId"); 
 
   useEffect(() => {
     loadComments();
@@ -57,7 +57,7 @@ const loadLikes = async () => {
 
 
   const toggleLike = async () => {
-  console.log("Bouton cliqué, liked =", liked); // <--- AJOUT
+  console.log("Bouton cliqué, liked =", liked); 
   try {
     if (liked) {
       await unlikePost(post.id, userId);
@@ -66,7 +66,7 @@ const loadLikes = async () => {
     }
     loadLikes();
   } catch (err) {
-    console.error("Erreur lors du like/unlike :", err); // <--- devrait déjà être là
+    console.error("Erreur lors du like/unlike :", err); 
   }
 };
 
@@ -121,7 +121,8 @@ const loadLikes = async () => {
         </div>
       )}
 
-      {/* 🔽 Section Likes */}
+
+
       <div className="mt-4 flex items-center gap-2">
         <button
           onClick={toggleLike}
@@ -136,7 +137,6 @@ const loadLikes = async () => {
         </span>
       </div>
 
-      {/* 🔽 Section Commentaires */}
       <div className="mt-6">
         <h4 className="font-semibold mb-2 text-gray-800">Commentaires</h4>
 

@@ -34,7 +34,7 @@ exports.friendRequest = async (req, res) => {
   }
 
   try {
-    // on va vérifier en premier si la demande d'amis existe déjà
+
     const doesRelationExist = await db.query(
       `SELECT * FROM friend_requests
        WHERE sender_id = $1 AND receiver_id = $2`,
@@ -45,7 +45,7 @@ exports.friendRequest = async (req, res) => {
       return res.status(400).json({ message: "Demande déjà existante." });
     }
 
-    // Si user A fait une demande à user B mais que User B follow A, on les considère comme amis
+
     const reciprocalFriendRequest = await db.query(
       `SELECT * FROM friend_requests
        WHERE sender_id = $2 AND receiver_id = $1 AND status='pending' `,

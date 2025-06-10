@@ -29,8 +29,6 @@ export async function createPost(postData) {
   return await response.json();
 }
 
-//export async function fetchPosts() { ... }
-//export async function createPost(postData) { ... }
 
 export async function uploadFiles(files) {
   const formData = new FormData();

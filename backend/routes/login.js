@@ -19,14 +19,14 @@ router.post("/", async (req, res) => {
 
     const user = result.rows[0];
 
-    // Compare le mot de passe avec le hash
+
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       return res.status(401).json({ message: "Incorrect email or password" });
     }
 
-    // Ne pas renvoyer le mot de passe au frontend
+
     delete user.password;
 
     res.status(200).json({ message: "Login successful", user });

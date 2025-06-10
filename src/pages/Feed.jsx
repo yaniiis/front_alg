@@ -30,7 +30,6 @@ export default function Feed() {
     const fileList = Array.from(e.target.files);
     setFiles(fileList);
 
-    // Generate preview
     const previewList = fileList.map(file => ({
       url: URL.createObjectURL(file),
       type: file.type.startsWith("video") ? "video" : "image"
@@ -41,7 +40,7 @@ export default function Feed() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Replace with actual user_id
+
       const user_id = localStorage.getItem("userId");
 
       const newPost = await createPost({ title, content, user_id });

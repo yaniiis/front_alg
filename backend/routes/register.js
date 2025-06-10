@@ -13,6 +13,8 @@ router.post("/", async (req, res) => {
     }
 
     const saltRounds = 10;
+    
+    // hash 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const result = await pool.query(

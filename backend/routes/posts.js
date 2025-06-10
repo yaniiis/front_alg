@@ -6,8 +6,6 @@ const path = require("path");
 const fs = require("fs");
 
 
-
-// 📁 Configuration du stockage avec Multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadDir = "uploads";
@@ -24,7 +22,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// ✅ GET : Récupérer les posts avec leurs médias
+// recup post avec leur media 
 router.get("/", async (req, res) => {
   try {
     const result = await pool.query(`
@@ -45,7 +43,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ✅ POST : Créer un nouveau post
+// nv post 
 router.post("/", async (req, res) => {
   const { title, content, user_id } = req.body;
   if (!title || !content || !user_id) {
@@ -64,7 +62,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// ✅ POST : Upload de fichiers (images / vidéos)
+// upload media 
 router.post("/upload", upload.array("files"), (req, res) => {
   try {
     const files = req.files.map(file => ({
@@ -78,7 +76,7 @@ router.post("/upload", upload.array("files"), (req, res) => {
   }
 });
 
-// ✅ POST : Lier un média à un post
+// liaison entre media et post 
 router.post("/media", async (req, res) => {
   const { post_id, url, type } = req.body;
   if (!post_id || !url || !type) {
@@ -98,7 +96,6 @@ router.post("/media", async (req, res) => {
 });
 
 
-// ✅ ✅ ✅ NOUVEAU : Récupérer les commentaires d’un post
 router.get("/:postId/comments", async (req, res) => {
   const { postId } = req.params;
   try {
@@ -117,7 +114,6 @@ router.get("/:postId/comments", async (req, res) => {
   }
 });
 
-// ✅ ✅ ✅ NOUVEAU : Ajouter un commentaire à un post
 router.post("/:postId/comments", async (req, res) => {
   const { postId } = req.params;
   const { user_id, content } = req.body;
@@ -127,7 +123,6 @@ router.post("/:postId/comments", async (req, res) => {
   }
 
   try {
-    // Ajouter le commentaire
     const result = await pool.query(
       `INSERT INTO comments (post_id, user_id, content)
        VALUES ($1, $2, $3)
@@ -135,7 +130,6 @@ router.post("/:postId/comments", async (req, res) => {
       [postId, user_id, content]
     );
 
-    // Récupérer le propriétaire du post
     const postResult = await pool.query(
       "SELECT user_id FROM posts WHERE id = $1",
       [postId]
@@ -144,9 +138,8 @@ router.post("/:postId/comments", async (req, res) => {
     if (postResult.rows.length > 0) {
       const postOwnerId = postResult.rows[0].user_id;
 
-      // Ne pas notifier si l'auteur du commentaire est aussi le propriétaire
       if (user_id !== postOwnerId) {
-        // Récupérer le username de l’auteur du commentaire
+
         const userResult = await pool.query(
           "SELECT username FROM users WHERE id = $1",
           [user_id]
@@ -156,7 +149,6 @@ router.post("/:postId/comments", async (req, res) => {
           const username = userResult.rows[0].username;
           const notifContent = `${username} commented on your post.`;
 
-          // Insertion de la notification
           await pool.query(
             `INSERT INTO notifications (user_id, type, content)
              VALUES ($1, 'comment', $2)`,

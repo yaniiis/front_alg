@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3001/api/posts"; // adapte selon ton setup
+const API_URL = "http://localhost:3001/api/posts"; 
 
 export async function getLikesCount(postId) {
   const res = await fetch(`${API_URL}/${postId}/likes/count`);
